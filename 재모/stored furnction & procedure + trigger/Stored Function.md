@@ -121,6 +121,6 @@ MySQL에 기본적으로 내장되어 있는 INFORMATION_SCHEMA에는 ROUTINES �
 
 ## 언제 사용하면 좋을까?
 Stored function에 비즈니스 로직을 둘 수도 있겠지만, 되도록 비즈니스 로직은 Logic tier에 두는 것이 좋다.   
-만약 stored function, 즉 Data tier에 비즈니스 로직을 둔다면 관리 비용이 증가하기 때문이다. [참고]()
+만약 stored function, 즉 Data tier에 비즈니스 로직을 둔다면 관리 비용이 증가하기 때문이다.
 
 따라서, 비즈니스 로직보다는 공통적으로 쓰이는 util 함수로 사용하면 좋을 것 같다.
