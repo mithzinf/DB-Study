@@ -28,7 +28,10 @@ metadata 또한 DBMS를 통해 관리된다.
 
 ### conceptual data models (개념적 데이터 모델링)
 
-![](/Users/admin/Desktop/스크린샷 2024-03-14 오후 7.16.37.png)
+
+<img src="1.png">
+
+
 
 추상화 수준이 가장 높으며, 직관적으로 이해하기 가장 쉽다. 주로 비즈니스 요구사항을 보여줄 때 사용하는
 모델링 기법이다. 
@@ -36,12 +39,12 @@ metadata 또한 DBMS를 통해 관리된다.
 
 ### logical data models (논리적 데이터 모델링)
 
-![](/Users/admin/Desktop/스크린샷 2024-03-14 오후 7.21.47.png)
+<img src="2.png">
 
 구체화 된 업무 중심 (컴퓨터에 저장 되는 구조와 유사하게)의 데이터 모델링 기법이다. 개념적 데이터 모델링
 보다 더 구체적이다. 이 때, `relational data model` 을 대표적으로 많이 사용하는데,
 
-![](/Users/admin/Desktop/스크린샷 2024-03-14 오후 7.24.23.png)
+<img src="3.png">
 
 이런식으로 데이터를 테이블 형태로 저장을 하고, 이 테이블을 `relation` 이라고 부른다.
 
@@ -84,7 +87,7 @@ schema를 보면서 데이터 베이스의 구조와 큰 그림을 파악할 수
 
 세 가지 레벨이 존재하며 각각의 레벨마다 `schema`가 정의되어 있다. 
 
-![](/Users/admin/Desktop/스크린샷 2024-03-14 오후 7.35.58.png)
+<img src="4.png">
 
 #### internal schema
 
