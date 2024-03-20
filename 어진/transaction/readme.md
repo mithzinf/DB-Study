@@ -20,8 +20,25 @@ UPDATE account SET balance = balance + 200000 WHERE id = "H";
 
 1. 트랜잭션 개념 정리
 
-**단일한 논리적인 작업 단위**  
-**논리적인 이유로 여러 SQL문들을 단일 작업으로 묶어서 나눠질 수 없게 만든 것**  
-**트랜잭션의 SQL문들 중 일부만 성공할 경우 : DB에 반영되지 않는다**  
++ **단일한 논리적인 작업 단위**  
++ **논리적인 이유로 여러 SQL문들을 단일 작업으로 묶어서 나눠질 수 없게 만든 것**  
++ **트랜잭션의 SQL문들 중 일부만 성공할 경우 : DB에 반영되지 않는다**
 
 
+## J가 H에게 20만원 이체한 것을 transaction으로 구현  
+\`\`\`
+mysql> select * from account;
+\`\`\`  
+
+| id | balance |
+| -- | ------- | 
+| J  | 1000000 | 
+| H  | 2000000 | 
+
+
+\`\`\`
+mysql> start transaction; //트랜잭션을 시작한다는 명령어  
+mysql> UPDATE account SET balance = balance - 200000 WHERE id = "J";  
+mysql> UPDATE account SET balance = balance + 200000 WHERE id = "H";  
+mysql> COMMIT;  //COMMIT : 지금까지 작업한 내용을 DB에 영구 저장하는 명령어 및 Tranaction 종료  
+\`\`\`
