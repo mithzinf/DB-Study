@@ -4,10 +4,14 @@
 0. 예제를 통해 트랜잭션 개념 파악하기
 'J가 H에게 20만원을 이체한다면, 각자의 계좌는 어떻게 변경되어야 할까?'
 ![image](https://github.com/mithzinf/DB-Study/assets/124668883/bc30a82c-b547-4559-a45e-f202565cc9b4)
+
+
 먼저, J의 계좌에서 - 20만원이 되어야 하고, H의 계좌에서는 + 20만원이 되어야 함
 
   이를, SQL문으로 변환한다면
 ![image](https://github.com/mithzinf/DB-Study/assets/124668883/ca20ec4a-7010-4fa2-ad6a-36c0cf56544f)
+
+
 UPDATE account SET balance = balance - 200000 WHERE id = "J";
 UPDATE account SET balance = balance + 200000 WHERE id = "H";
 로 변환 가능
