@@ -13,7 +13,11 @@
 
 
 UPDATE account SET balance = balance - 200000 WHERE id = "J";
+
+
 UPDATE account SET balance = balance + 200000 WHERE id = "H";
+
+
 로 변환 가능
 
 두 개의 **update** 문이 성립을 해야지만 이체라는 작업이 정상 처리됨 = = Transaction
