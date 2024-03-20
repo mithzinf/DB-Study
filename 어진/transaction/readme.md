@@ -26,9 +26,9 @@ UPDATE account SET balance = balance + 200000 WHERE id = "H";
 
 
 ##### J가 H에게 20만원 이체한 것을 transaction으로 구현 & COMMIT의 개념  
-\`\`\`sql
+```sql
 mysql> select * from account;  
-\`\`\`  
+```  
 
 | id | balance |
 | -- | ------- | 
