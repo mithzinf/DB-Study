@@ -1,31 +1,25 @@
 # Transaction이란?
-
-
-0. 예제를 통해 트랜잭션 개념 파악하기
-'J가 H에게 20만원을 이체한다면, 각자의 계좌는 어떻게 변경되어야 할까?'
-![image](https://github.com/mithzinf/DB-Study/assets/124668883/bc30a82c-b547-4559-a45e-f202565cc9b4)
-
-
-먼저, J의 계좌에서 - 20만원이 되어야 하고, H의 계좌에서는 + 20만원이 되어야 함
-
-  이를, SQL문으로 변환한다면
-![image](https://github.com/mithzinf/DB-Study/assets/124668883/ca20ec4a-7010-4fa2-ad6a-36c0cf56544f)
-
-
-UPDATE account SET balance = balance - 200000 WHERE id = "J";  
-UPDATE account SET balance = balance + 200000 WHERE id = "H";  
-로 변환 가능  
-
-두 개의 **update** 문이 성립을 해야지만 이체라는 작업이 정상 처리됨 = = Transaction  
+1. 트랜잭션 개념 정리
+2. START TRANSACTION / COMMIT / ROLLBACK / AUTOCOMMIT
+3. JAVA / SPRING에서의 트랜잭션 사용 예제
+4. ACID 
+***
 
 1. 트랜잭션 개념 정리
+- 단일한 논리적인 작업 단위
+- 논리적인 이유로 여러 SQL문들을 단일 작업으로 묶어서 나눠질 수 없게 만든 것
+- 트랜잭션의 SQL문들 중 일부만 성공할 경우 : DB에 반영되지 않는다
 
-+ **단일한 논리적인 작업 단위**  
-+ **논리적인 이유로 여러 SQL문들을 단일 작업으로 묶어서 나눠질 수 없게 만든 것**  
-+ **트랜잭션의 SQL문들 중 일부만 성공할 경우 : DB에 반영되지 않는다**
+2. START TRANSACTION / COMMIT / ROLLBACK / AUTOCOMMIT    
+    1. START TRANSACTION & COMMIT의 개념
+    2. ROLLBACK의 개념
+    3. AUTOCOMMIT의 개념  
+    
+  
 
-
-##### J가 H에게 20만원 이체한 것을 transaction으로 구현 & COMMIT의 개념  
+> 1. START TRANSACTION & COMMIT의 개념  
+> 예시) J가 H에게 20만원을 이체
+ 
 ```sql
 mysql> select * from account;  
 ```  
@@ -53,9 +47,8 @@ mysql> select * from account;
 | J  |  800000 | 
 | H  | 2200000 |   
 
-
-##### 추가로 J가 H에게 30만원 이체한 것을 transaction으로 구현 & ROLLBACK 개념  
-
+>2.ROLLBACK의 개념  
+>예시) J가 H에게 30만원을 더 이체 후 ROLLBACK  
 ```sql
 mysql> start transaction; //트랜잭션 시작  
 mysql> UPDATE account SET balance = balance - 300000 WHERE id = "J";  
@@ -67,21 +60,23 @@ mysql> select * from account;
 | J  |  500000 | 
 | H  | 2200000 |   
 
-> J의 업데이트문만 실행이 된 상태이기 때문에, H의 잔액에는 변화가 없음
+*J의 업데이트문만 실행이 된 상태이기 때문에, H의 잔액에는 변화가 없음*
 
-만약 ROLLBACK을 수행하게 되면 어떻게 되는가?
+**만약 ROLLBACK을 수행하게 되면 어떻게 되는가?**
 
 ```sql 
 mysql> rollback;  //rollback : 지금까지 작업들을 모두 취소하고, transaction 이전 상태로 되돌림 및 transaction 종료
 ```
 
-##### AUTOCOMMIT 개념
+>3.AUTOCOMMIT   
+>AUTOCOMMIT을 활성화했을 때/ 비활성화 했을 때
+
 - 각각의 SQL문을 자동으로 transaction 처리 해주는 개념
 - SQL문이 성공적 실행 > 자동 COMMIT / SQL문 실행 중 문제 발생 > 자동 ROLLBACK
 - Mysql에서는 autocommit 기능이 default로 설정되어있음
 - 타 DBMS에서도 대부분 같은 기능을 제공함
 
-1. AUTOCOMMIT을 활성화했을 때 
+        1. AUTOCOMMIT을 활성화했을 때 
 ```sql 
 mysql> select @@AUTOCOMMIT;
 ```
@@ -106,7 +101,7 @@ mysql> select * from account;
 | H  | 2200000 | 
 | W  | 1000000 | 
 
-2. AUTOCOMMIT을 비활성화 했을 때
+        2. AUTOCOMMIT을 비활성화 했을 때
 
 ```sql
 mysql> set AUTOCOMMIT = 0;  
@@ -129,6 +124,74 @@ mysql> select * from account;
 | H  | 2200000 | 
 *autocommit을 off한 후의 delete문 실행 후 출력결과*
 *만일 rollback을 한다면, 다시 이전 상태로 돌아갈 수 있음*
+
+
+3. JAVA / SPRING에서의 트랜잭션 사용 예제
+
+>JAVA에서의 트랜잭션 사용 예제  
+>transfer 메소드에 트랜잭션 정의
+
+~~~java
+public void transfer(String fromId, String told, int amount) {
+    try {
+        Connection connection = ...; //DB 커넥션 가지고 옴
+        connection.setAutoCommit(false); //DB커넥션의 오토커밋 false : start transaction 의미
+        ...
+        ...
+        connection.commit(); //로직 성공시 commit
+    } catch(Exception e) {
+        ...
+        connection.rollback(); //로직 실패시 rollback
+        ...
+    } finally {
+        connection.setAutoCommit(true); //마지막은 항상 true상태로 해놓기
+    }
+}
+~~~
+
+>SRPING에서의 트랜잭션 사용 예제  
+>@Transactional 활용
+
+~~~java
+@Transactional
+public void transfer(String fromid, String told, int amount) {
+    ...
+    ...
+}
+~~~
+
+4. ACID   
+* ACID : 트랜잭션이 갖춰야할 특성
+    * Atomicity
+    * Consistency
+    * Isolation
+    * Durability    
+  
+
+
+* Atomicity : 원자성
+    * all or nothing
+    * 트랜잭션은 쪼개질 수 없는 작업이기에 내부의 SQL문들은 모두 성공하거나, 혹은 모두 취소되어야 함
+* Consistency : 일관성
+    * DB에 정의된 규칙 위반하면 X
+    * 무결성 제약 조건(기본키,외래키..) 유지
+
+* Isolation : 격리
+    * 동시에 여러 트랜잭션 실행될 때, 각 트랜잭션이 서로에게 영향을 받지 않도록 보장
+    * 동시성 문제 방지
+    * DBMS는 여러 종류의 isolation level 제공
+
+* Durability : 영속성
+    * commit된 트랜잭션은 영구 저장됨
+    * DB에 문제가 생겨도, commit된 트랜잭션은 DB 상에 남아있음
+    * HDD,SDD 등 비휘발성 메모리에 저장
+
+
+
+
+
+
+ 
 
 
   
