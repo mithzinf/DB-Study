@@ -12,18 +12,16 @@
 ![image](https://github.com/mithzinf/DB-Study/assets/124668883/ca20ec4a-7010-4fa2-ad6a-36c0cf56544f)
 
 
-UPDATE account SET balance = balance - 200000 WHERE id = "J";
+UPDATE account SET balance = balance - 200000 WHERE id = "J";  
+UPDATE account SET balance = balance + 200000 WHERE id = "H";  
+로 변환 가능  
 
-
-UPDATE account SET balance = balance + 200000 WHERE id = "H";
-
-
-로 변환 가능
-
-두 개의 **update** 문이 성립을 해야지만 이체라는 작업이 정상 처리됨 = = Transaction
+두 개의 **update** 문이 성립을 해야지만 이체라는 작업이 정상 처리됨 = = Transaction  
 
 1. 트랜잭션 개념 정리
 
-**단일한 논리적인 작업 단위**
-**논리적인 이유로 여러 SQL문들을 단일 작업으로 묶어서 나눠질 수 없게 만든 것**
-**트랜잭션의 SQL문들 중 일부만 성공할 경우 : DB에 반영되지 않는다**
+**단일한 논리적인 작업 단위**  
+**논리적인 이유로 여러 SQL문들을 단일 작업으로 묶어서 나눠질 수 없게 만든 것**  
+**트랜잭션의 SQL문들 중 일부만 성공할 경우 : DB에 반영되지 않는다**  
+
+
