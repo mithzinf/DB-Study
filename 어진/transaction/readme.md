@@ -26,8 +26,8 @@ UPDATE account SET balance = balance + 200000 WHERE id = "H";
 
 
 ## J가 H에게 20만원 이체한 것을 transaction으로 구현  
-\`\`\`
-mysql> select * from account;
+\`\`\`  
+mysql> select * from account;  
 \`\`\`  
 
 | id | balance |
@@ -36,7 +36,7 @@ mysql> select * from account;
 | H  | 2000000 | 
 
 
-\`\`\`
+\`\`\`  
 mysql> start transaction; //트랜잭션을 시작한다는 명령어  
 mysql> UPDATE account SET balance = balance - 200000 WHERE id = "J";  
 mysql> UPDATE account SET balance = balance + 200000 WHERE id = "H";  
