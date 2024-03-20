@@ -81,7 +81,7 @@ mysql> rollback;  //rollback : 지금까지 작업들을 모두 취소하고, tr
 - Mysql에서는 autocommit 기능이 default로 설정되어있음
 - 타 DBMS에서도 대부분 같은 기능을 제공함
 
- AUTOCOMMIT을 활성화했을 때 
+1. AUTOCOMMIT을 활성화했을 때 
 ```sql 
 mysql> select @@AUTOCOMMIT;
 ```
@@ -94,7 +94,7 @@ mysql> select @@AUTOCOMMIT;
 mysql> insert into account values ('W',1000000);
 ```  
 
-##### AUTOCOMMIT이 활성화된 상태이기 때문에, insert문을 실행하면 자동 COMMIT이 되면서 account 테이블에 ('W', 1000000) 데이터가 영구 저장됨  
+*AUTOCOMMIT이 활성화된 상태이기 때문에, insert문을 실행하면 자동 COMMIT이 되면서 account 테이블에 ('W', 1000000) 데이터가 영구 저장됨*  
 
 ```sql  
 mysql> select * from account;  
@@ -106,7 +106,7 @@ mysql> select * from account;
 | H  | 2200000 | 
 | W  | 1000000 | 
 
- AUTOCOMMIT을 비활성화 했을 때
+2. AUTOCOMMIT을 비활성화 했을 때
 
 ```sql
 mysql> set AUTOCOMMIT = 0;  
@@ -127,6 +127,8 @@ mysql> select * from account;
 | id | balance |
 | -- | ------- | 
 | H  | 2200000 | 
-[autocommit을 off한 후의 delete문 실행 후 출력결과]
-[만일 rollback을 한다면, 다시 이전 상태로 돌아갈 수 있음]
+*autocommit을 off한 후의 delete문 실행 후 출력결과*
+*만일 rollback을 한다면, 다시 이전 상태로 돌아갈 수 있음*
+
+
   
