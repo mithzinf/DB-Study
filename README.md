@@ -11,10 +11,10 @@
 - 매주 선정된 한명이 학습한 내용을 발표하고, 질의 응답 시간을 갖습니다.
 
 ## 📚 목차
-|주차|주제|정리 내용|
+|주차|주제|주요 질문|
 |---|---|---|
-|Week 1|데이터베이스란?<br>SQL<br>Stored Function, Stored Procedure, Trigger|...|
-|Week 2|트랜잭션|...|
+|Week 1|데이터베이스란?<br>SQL<br>Stored Function, Stored Procedure, Trigger|[CHAR vs VARCHAR](https://github.com/Hanjaemo/DB-Study/discussions/8)|
+|Week 2|트랜잭션|[트랜잭션 동시성 제어에 나오는 conflict라는 단어는 무엇을 의미할까요?](https://github.com/Hanjaemo/DB-Study/discussions/14)<br>[@Transactional의 readOnly를 true로 설정했을 때 이점은 무엇일까요?](https://github.com/Hanjaemo/DB-Study/discussions/15)|
 |Week 3|Lock, MVCC|...|
 |Week 4|이상현상, 정규화|...|
 |Week 5|인덱스|...|
