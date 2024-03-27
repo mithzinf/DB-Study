@@ -136,10 +136,10 @@
 
   - conservative 2PL : 모든 lock을 취득한 뒤, 트랜잭션 시작, 데드락 발생 X, 실용성 꽝  
     ![image](https://github.com/mithzinf/DB-Study/assets/124668883/1a336ad7-9154-4e90-b9ce-689f0d5f930f)    
-  - strict 2PL (S2PL) : strict schedule을 보장하는 2PL, recoverability를 보장함, write-lock을 commit/rollback될 때 그 해당 lock의 unlock이 실행
-    ![image](https://github.com/mithzinf/DB-Study/assets/124668883/d6b72a81-0c3d-4c40-bd50-f7071a4f5bea)  
-  - strong strict 2PL (SS2PL / rigorous 2PL) : strict schedule 보장하는 2PL, recoverability 보장함, read-lock/write-lock 모두 commit/rollback될 때 그 해당 lock에 대한 unlock이 실행, S2PL보다 구현이 쉬움
-   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/dc57883b-dce3-4e7f-975c-989b664c1d5e)  
+  - strict 2PL (S2PL) : strict schedule을 보장하는 2PL, recoverability를 보장함, write-lock을 commit/rollback될 때 그 해당 lock의 unlock이 실행  
+    ![image](https://github.com/mithzinf/DB-Study/assets/124668883/d6b72a81-0c3d-4c40-bd50-f7071a4f5bea)    
+  - strong strict 2PL (SS2PL / rigorous 2PL) : strict schedule 보장하는 2PL, recoverability 보장함, read-lock/write-lock 모두 commit/rollback될 때 그 해당 lock에 대한 unlock이 실행, S2PL보다 구현이 쉬움  
+   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/dc57883b-dce3-4e7f-975c-989b664c1d5e)    
 
 
 
