@@ -1,7 +1,7 @@
  # MVCC
 1. MVCC 등장 배경 / 설명   
 2. postgreSQL - lost update 문제 및 해결방안  
-3. mySQL에서 lost update 문제 및 해결방안
+3. mySQL - lost update 문제 및 해결방안
 
 ---
 
@@ -42,7 +42,7 @@
 7) y에 40을 더해주는 작업을 실행하기 위해, 먼저 y의 값을 읽어준다 : read(y) = 10
 8) y값을 읽은 후, y에 40을 더해주기 위해 write(y=50) 작업을 실행하기 위해서 먼저 y에 대한 write_lock(y)을 취득해야함
 9) write_lock(y) 취득한 후, 트랜잭션1 내 가상 공간에 y = 50값을 넣어놓음  
-![image](https://github.com/mithzinf/DB-Study/assets/124668883/5974276f-6444-475a-a587-b5e6c41a5054)  
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/5974276f-6444-475a-a587-b5e6c41a5054)   
 10) 트랜잭션1에서 해야할 작업은 다 마쳤기 때문에, 트랜잭션1은 commit을 실행함 & 트랜잭션1의 가상 공간에 저장되어 있던 x,y값은 실제로 DB상에 저장됨 : **x = 10, y = 50**
 11) write_lock을 기다리고 있던 트랜잭션2는 write_lock을 획득함 *마참내...* & 트랜잭션 초기에 진행하려다가 말았던 write(x = 80) 실행하게 됨
 12) 트랜잭션 1때와 동일하게, 트랜잭션 2 또한 MVCC로 동작하기 때문에 트랜잭션 2만의 가상 공간을 만든 후 그 안에 x = 80 값을 넣어놓음
@@ -64,20 +64,20 @@
 ✔️**트랜잭션 2의 아이솔레이션 레벨을 repeatable read 수준으로 변경 : 결과 실패**    
 
     
-![image](https://github.com/mithzinf/DB-Study/assets/124668883/0752bccb-4835-463e-b5b1-942898894d7b) 
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/0752bccb-4835-463e-b5b1-942898894d7b)   
 
-1) 노란색 일직선 기준 윗부분까지는 아까와 똑같이 동작함 : 트랜잭션 1의 commit으로 인해 DB상의 x,y값이 각각 x=10, y=50으로 업데이트 & 두 개의 write_lock은 반환,해제
-2) 트랜잭션1의 write_lock이 해제되는 것을 기다렸던 트랜잭션 2는 바로, x에 대한 write_lock을 획득하게 되고 x값에 80을 대입하게 된다 (write(x = 80) 발동)
-   2-1) BUT 트랜잭션 2는 repeatable read 상태이기 때문에, write(x=80)작업이 실패하게 됨
-   **이유) postgreSQL에서 repeatable read 상태일 때는, 같은 데이터에 먼저 update한 트랜잭션이 commit 되면 후순위 트랜잭션은 rollback이 되기 때문에 *write(x=80)이 빠꾸가 되는 거임* aka first updater win 이라고 칭함**
+1) 노란색 일직선 기준 윗부분까지는 아까와 똑같이 동작함 : 트랜잭션 1의 commit으로 인해 DB상의 x,y값이 각각 x=10, y=50으로 업데이트 & 두 개의 write_lock은 반환,해제  
+2) 트랜잭션1의 write_lock이 해제되는 것을 기다렸던 트랜잭션 2는 바로, x에 대한 write_lock을 획득하게 되고 x값에 80을 대입하게 된다 (write(x = 80) 발동)  
+   2-1) BUT 트랜잭션 2는 repeatable read 상태이기 때문에, write(x=80)작업이 실패하게 됨  
+   **이유) postgreSQL에서 repeatable read 상태일 때는, 같은 데이터에 먼저 update한 트랜잭션이 commit 되면 후순위 트랜잭션은 rollback이 되기 때문에 *write(x=80)이 빠꾸가 되는 거임* aka first updater win 이라고 칭함**  
 
 
 
-##### 결과 : 트랜잭션 1만 commit, 트랜잭션 2는 rollback으로 마무리됨으로 DB에는 x = 10, y = 50으로 update
-**기대값 : x = 40, y = 50과 다른 값이 출력되어 lost update 해결 실패**
-   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/679bb00e-f39a-4549-873e-d551a5032c88)  
-   **=> 한 트랜잭션(트랜잭션2)의 격리 수준을 repeatable read로 승격한다 : 실패**  
-   하지만...그 이후, 트랜잭션 2는 rollback 이후 x에 30을 입금하는 작업을 재개하면 기대값 출력 될수도 있음
+##### 결과 : 트랜잭션 1만 commit, 트랜잭션 2는 rollback으로 마무리됨으로 DB에는 x = 10, y = 50으로 update  
+**기대값 : x = 40, y = 50과 다른 값이 출력되어 lost update 해결 실패**  
+   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/679bb00e-f39a-4549-873e-d551a5032c88)    
+   **=> 한 트랜잭션(트랜잭션2)의 격리 수준을 repeatable read로 승격한다 : 실패**    
+   하지만...그 이후, 트랜잭션 2는 rollback 이후 x에 30을 입금하는 작업을 재개하면 기대값 출력 될수도 있음   
 
 ---
 
@@ -88,26 +88,26 @@
 
 
 
-![image](https://github.com/mithzinf/DB-Study/assets/124668883/f17b8f7f-76d6-4784-b041-2945d8f599ad)
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/f17b8f7f-76d6-4784-b041-2945d8f599ad)  
 
 1) 트랜잭션2가 먼저 동작하고, x에 30을 입금하기 위해 먼저 x값을 읽어온다 : read(x) => 50
 2) 그 다음 트랜잭션 1이 연이어 동작하여 x값을 읽어옴 : read(x) => 50
-3) 'x에 30을 입금'하기 위해 트랜잭션 2를 통해 write(x=80)를 실행하자 -> So, 트랜잭션 2에 가상 공간이 생기게 되고 그 안에 x = 80이 들어가게 된다
+3) 'x에 30을 입금'하기 위해 트랜잭션 2를 통해 write(x=80)를 실행하자 -> So, 트랜잭션 2에 가상 공간이 생기게 되고 그 안에 x = 80이 들어가게 된다  
    ![image](https://github.com/mithzinf/DB-Study/assets/124668883/8c36c201-e266-489d-80aa-1f13c9a2cc6e)  
 4) 그 후, 트랜잭션 1이 연이어 동작하여, x가 y에 40을 이체하기 위해 x의 값을 10으로 다시 써준다 : 
  write(x=10)
  4-1) 트랜잭션에서 write를 실행하기 위해서는, write_lock을 먼저 보유하고 있어야 함
- 4-2) write_lock은 현재, 트랜잭션 2이 x에 대한 write_lock을 가지고 있기 때문에 트랜잭션1은 트랜잭션2가 실행을 다 마칠 때까지 그저 기다리고 있어야 함
+ 4-2) write_lock은 현재, 트랜잭션 2이 x에 대한 write_lock을 가지고 있기 때문에 트랜잭션1은 트랜잭션2가 실행을 다 마칠 때까지 그저 기다리고 있어야 함  
    ![image](https://github.com/mithzinf/DB-Study/assets/124668883/0b30fb10-77f6-4da4-8f46-55a3895a6d65)
 5) 트랜잭션 2가 commit 명령어 실행 : DB 상의 x값 : 80, y값 : 10으로 update 및 write_lock 해제
 6) 트랜잭션 1이 write_lock 보유 - x가 y에 40을 이체하기 위해 x의 값을 10으로 다시 써준다 : 
  write(x=10)
  6-1) 트랜잭션 1 내 MVCC 가상공간에 x = 10을 저장
 7) 그 후, y+40 작업을 해줘야 하므로 y값을 read한 후 write(y=50)을 해준다 : read(y)=>10과 write(y=50) 실행함
-   7-1) 트랜잭션 1 내 MVCC 가상공간에 y = 50 저장
-   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/2a133ae5-24c0-49e7-8da2-96b6694c57f7)  
-9) 일련의 이체 작업 완료 후 트랜잭션 commit 명령어 실행
-10) DB상의 x,y값 : **x=10 y=50** 으로 update 및 lock 해제   
+   7-1) 트랜잭션 1 내 MVCC 가상공간에 y = 50 저장  
+   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/2a133ae5-24c0-49e7-8da2-96b6694c57f7)    
+8) 일련의 이체 작업 완료 후 트랜잭션 commit 명령어 실행
+9) DB상의 x,y값 : **x=10 y=50** 으로 update 및 lock 해제   
 
 ##### 결과 : 트랜잭션 1,2 둘다 commit으로 마무리 & DB에는 x = 10, y = 50으로 update  
 **기대값 : x = 40, y = 50과 다른 값이 출력되어 lost update 해결 실패**  
