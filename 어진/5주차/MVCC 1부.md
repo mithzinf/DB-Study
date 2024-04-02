@@ -118,8 +118,41 @@
 
 
 ### lost update 문제 해결 시도 3
-✔️**만일, 트랜잭션1, 트랜잭션2 둘 다 repeatable read로 격리수준을 바꿔주게 된다면? : 결과 성공**
-- repeatable read : 같은 데이터를 먼저 update한 선순위 트랜잭션이 commit 상태가 되면, 후순위 트랜잭션은 rollback이 된다 (일등밖에 모르는 세상)
+✔️**만일, 트랜잭션1, 트랜잭션2 둘 다 repeatable read로 격리수준을 바꿔주게 된다면? : 기대값과 같은 결과값 출력 성공**
+- repeatable read : 같은 데이터를 먼저 update한 선순위 트랜잭션이 commit 상태가 되면, 후순위 트랜잭션은 rollback이 된다 
+
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/7add0058-bb05-4622-ba99-1920d4a84d62)  
+1) 트랜잭션2가 먼저 동작 : x에 30 입금을 실행하기 위해 먼저 x값을 읽어온다 : read(x) = 50
+2) 이어서 트랜잭션1도 동작 : 동작 후 x값을 읽어 온다 : read(x)=50
+3) 트랜잭션2의 연산부터 진행할 것이기 때문에, x에 30을 입금하는 연산 실행 : write(x = 80) & write_lock 발동
+4) 그 다음 트랜잭션1의 'x가 y에 40 이체' 연산 실행 시도 but 실패: write(x = 10) 하려고 했으나 write_lock이 이미 트랜잭션2에서 발동중이기 때문에, 트랜잭션1은 발목 잡힌 상태로 트랜잭션2의 commit만을 기다려야 함
+5) 트랜잭션2는 commit 완 : **즉 x=80, y=10으로 DB상에 저장됨**
+6) repeatable read 논리로 인해, 같은 데이터에 먼저 update가 된 트랜잭션2가 commit이 되면 후순위 트랜잭션인 트랜잭션1은 rollback이 된다
+7) 트랜잭션1 rollback 후, DB상의 x=80, y=10을 바탕으로 **x가 y에 40 이체** 연산을 다시 진행한다
+8) 이체 -> x = x-40 & y = y+40 대입
+9) 트랜잭션1 MVCC 구조를 통해, 트랜잭션 1 내 가상공간 하나가 만들어지고, 그 안에 80-40 = 40을 x값에 대입, 10+40 = 50을 y값에 대입하여 넣어놓는다
+10) 이어서 트랜잭션1 commit이 이루어지고, 그 결과로 write&read lock 해제 및 DB상의 x,y값이 각각 x=40,y=50으로 update
+11) **기대값과 같은 결과값 출력** 꺄아악~!~!
+
+
+
+
+
+---
+
+
+3. mySQL에서 lost update 문제 및 해결방안
+
+
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/38c12727-0953-4d1a-9782-310af7fc1d73)
+**결론 : mySQL에서는 lost update를 방지하는 repeatable read같은 개념의 부재로, lost update 같은 문제가 발생하게 됨**
+mySQL에서는 위와 같은, repeatable read 같은 개념이 없다 (이런 개념은 postgreSQL에 존재하는 개념)  그래서, write가 실행 실패한다거나 중간에 가로막히는 일이 발생하지 않는다.  mySQL에서는 막힘없이 쭉쭉 진행하게 된다.  
+
+
+
+### mySQL에서 lost update 문제에 대한 해결방안은? 다음 포스트에 이어서
+
+
 
 
 
