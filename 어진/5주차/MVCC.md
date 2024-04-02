@@ -26,7 +26,7 @@
 > 데이터의 일관성 붕괴, 예상치 못한 결과 초래 有
 > 예제를 통해 설명  
 
-✔️모든 트랜잭션이 read commited인 경우, lost update 발생  
+✔️**모든 트랜잭션이 read commited인 경우, lost update 발생**  
 👉초기값 : x = 50, y = 10 / 트랜잭션 1 : x가 y에 40을 이체한다 / 트랜잭션 2 : x에 30을 입금한다
 🎲**기대값 : x = 40, y = 50이 되어야 함**
 ![image](https://github.com/mithzinf/DB-Study/assets/124668883/b951c489-c55b-45c5-9df8-ae8c004b7465)    
@@ -49,12 +49,82 @@
 13) 그 다음 트랜잭션 2 commit 실행하게 되면, 트랜잭션 2의 가상공간에 저장되어 있던 x = 80값이 DB에 실제로 저장되므로 x와 y값은 다음과 같이 변한다 **최종 결과 : x = 80, y = 50**
 14) 최종적으로 write_lock은 commit 등판과 동시에 사라지게 된다
 
+---
+
 
 ## lost update 개념 설명
 기대값 : x = 40, y = 50  
 결과값 : x = 80, y = 50으로   
 이처럼 기대값과 다른 결과값이 나온 경우를 **lost update** 라고 함
+
+
+---
+
+### lost update 문제 해결 시도 1 
+✔️**트랜잭션 2의 아이솔레이션 레벨을 repeatable read 수준으로 변경 : 결과 실패**    
+
     
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/0752bccb-4835-463e-b5b1-942898894d7b) 
+
+1) 노란색 일직선 기준 윗부분까지는 아까와 똑같이 동작함 : 트랜잭션 1의 commit으로 인해 DB상의 x,y값이 각각 x=10, y=50으로 업데이트 & 두 개의 write_lock은 반환,해제
+2) 트랜잭션1의 write_lock이 해제되는 것을 기다렸던 트랜잭션 2는 바로, x에 대한 write_lock을 획득하게 되고 x값에 80을 대입하게 된다 (write(x = 80) 발동)
+   2-1) BUT 트랜잭션 2는 repeatable read 상태이기 때문에, write(x=80)작업이 실패하게 됨
+   **이유) postgreSQL에서 repeatable read 상태일 때는, 같은 데이터에 먼저 update한 트랜잭션이 commit 되면 후순위 트랜잭션은 rollback이 되기 때문에 *write(x=80)이 빠꾸가 되는 거임* aka first updater win 이라고 칭함**
+
+
+
+##### 결과 : 트랜잭션 1만 commit, 트랜잭션 2는 rollback으로 마무리됨으로 DB에는 x = 10, y = 50으로 update
+**기대값 : x = 40, y = 50과 다른 값이 출력되어 lost update 해결 실패**
+   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/679bb00e-f39a-4549-873e-d551a5032c88)  
+   **=> 한 트랜잭션(트랜잭션2)의 격리 수준을 repeatable read로 승격한다 : 실패**  
+   하지만...그 이후, 트랜잭션 2는 rollback 이후 x에 30을 입금하는 작업을 재개하면 기대값 출력 될수도 있음
+
+---
+
+
+
+### lost update 문제 해결 시도 2
+✔️**트랜잭션1, 트랜잭션 시작 순서를 바꿔서 트랜잭션2가 먼저 실행되도록 한다면? (트랜잭션1 : read committed & 트랜잭션2 : repeatable read인 상황) : 결과 실패**
+
+
+
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/f17b8f7f-76d6-4784-b041-2945d8f599ad)
+
+1) 트랜잭션2가 먼저 동작하고, x에 30을 입금하기 위해 먼저 x값을 읽어온다 : read(x) => 50
+2) 그 다음 트랜잭션 1이 연이어 동작하여 x값을 읽어옴 : read(x) => 50
+3) 'x에 30을 입금'하기 위해 트랜잭션 2를 통해 write(x=80)를 실행하자 -> So, 트랜잭션 2에 가상 공간이 생기게 되고 그 안에 x = 80이 들어가게 된다
+   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/8c36c201-e266-489d-80aa-1f13c9a2cc6e)  
+4) 그 후, 트랜잭션 1이 연이어 동작하여, x가 y에 40을 이체하기 위해 x의 값을 10으로 다시 써준다 : 
+ write(x=10)
+ 4-1) 트랜잭션에서 write를 실행하기 위해서는, write_lock을 먼저 보유하고 있어야 함
+ 4-2) write_lock은 현재, 트랜잭션 2이 x에 대한 write_lock을 가지고 있기 때문에 트랜잭션1은 트랜잭션2가 실행을 다 마칠 때까지 그저 기다리고 있어야 함
+   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/0b30fb10-77f6-4da4-8f46-55a3895a6d65)
+5) 트랜잭션 2가 commit 명령어 실행 : DB 상의 x값 : 80, y값 : 10으로 update 및 write_lock 해제
+6) 트랜잭션 1이 write_lock 보유 - x가 y에 40을 이체하기 위해 x의 값을 10으로 다시 써준다 : 
+ write(x=10)
+ 6-1) 트랜잭션 1 내 MVCC 가상공간에 x = 10을 저장
+7) 그 후, y+40 작업을 해줘야 하므로 y값을 read한 후 write(y=50)을 해준다 : read(y)=>10과 write(y=50) 실행함
+   7-1) 트랜잭션 1 내 MVCC 가상공간에 y = 50 저장
+   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/2a133ae5-24c0-49e7-8da2-96b6694c57f7)  
+9) 일련의 이체 작업 완료 후 트랜잭션 commit 명령어 실행
+10) DB상의 x,y값 : **x=10 y=50** 으로 update 및 lock 해제   
+
+##### 결과 : 트랜잭션 1,2 둘다 commit으로 마무리 & DB에는 x = 10, y = 50으로 update  
+**기대값 : x = 40, y = 50과 다른 값이 출력되어 lost update 해결 실패**  
+**=> 트랜잭션 1의 격리 수준이 read committed로는 충분하지 않음**  
+
+
+---
+
+
+### lost update 문제 해결 시도 3
+✔️**만일, 트랜잭션1, 트랜잭션2 둘 다 repeatable read로 격리수준을 바꿔주게 된다면? : 결과 성공**
+- repeatable read : 같은 데이터를 먼저 update한 선순위 트랜잭션이 commit 상태가 되면, 후순위 트랜잭션은 rollback이 된다 (일등밖에 모르는 세상)
+
+
+
+
+
 
 
 
