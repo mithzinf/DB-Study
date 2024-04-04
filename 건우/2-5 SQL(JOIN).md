@@ -51,7 +51,7 @@
 
 ### 예시
 
-![alt text](img/image-9.png)
+![alt text](img/1-3/image-9.png)
 
 ```SQL
 SELECT *
@@ -87,7 +87,7 @@ FROM employee E LEFT OUTER JOIN
 department D ON E.dept_id = D.id;
 ```
 
-![alt text](img/image-10.png)
+![alt text](img/1-3/image-10.png)
 
 ### RIGHT [OUTER] JOIN
 
@@ -103,7 +103,7 @@ FROM employee E RIGHT OUTER JOIN
 department D ON E.dept_id = D.id;
 ```
 
-![alt text](img/image-11.png)
+![alt text](img/1-3/image-11.png)
 
 ### FULL [OUTER] JOIN
 
@@ -121,7 +121,7 @@ FROM employee E FULL OUTER JOIN
 department D ON E.dept_id = D.id;
 ```
 
-![alt text](img/image-12.png)
+![alt text](img/1-3/image-12.png)
 
 ## USING
 

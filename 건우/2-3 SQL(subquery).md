@@ -14,7 +14,7 @@
 
 복잡해지니까 어렵네.. ㄷㄷ
 
-![alt text](img/image-7.png)
+![alt text](img/1-3/image-7.png)
 
 ### 예제1 : ID가 14인 임직원보다 생일이 빠른 임직원의 ID, 이름, 생일을 조회
 

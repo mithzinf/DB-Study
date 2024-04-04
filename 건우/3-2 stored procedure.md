@@ -67,7 +67,7 @@ END
 
 실제로 사용한다면 해당 RDBMS에 맞춰서 문서를 참고해야함.
 
-![alt text](img/image-13.png)
+![alt text](img/1-3/image-13.png)
 
 ## stored procedure의 장점
 
@@ -79,10 +79,9 @@ WAS의 비즈니스 로직을 변경하고, 다시 배포를 하는 상황을 �
 
 완전한 블루 그린 배포를 사용한다면 해결이 되겠지만 인프라 리소스가 부담된다.
 
+![alt text](img/1-3/image-15.png)
 
-![alt text](img/image-15.png)
-
-![alt text](img/image-16.png)
+![alt text](img/1-3/image-16.png)
 
 (이러한 배포 방식을 롤링 배포 라고 하는것 같다)
 
@@ -98,7 +97,7 @@ WAS의 비즈니스 로직을 변경하고, 다시 배포를 하는 상황을 �
 
 ### 여러 서비스에서 재사용 가능하다.
 
-![alt text](img/image-17.png)
+![alt text](img/1-3/image-17.png)
 
 - 위와 같이 여러 서비스에서 하나의 DB서버에 접근해야 하는경우
 
@@ -156,8 +155,8 @@ WAS의 비즈니스 로직을 변경하고, 다시 배포를 하는 상황을 �
 
 - 따라서 아래와 같이 아키텍처를 가져가는 것이 좋다.
 
-  ![alt text](img/image-18.png)
-
+  ![alt text](img/1-3/image-18.png)
+  
 - restAPI를 지원하는 data service를 두고, 
 
   service A에 트래픽이 심하게 몰리면 A를 끊으면 된다.
@@ -171,7 +170,7 @@ WAS의 비즈니스 로직을 변경하고, 다시 배포를 하는 상황을 �
 
 - 만약에 insert와 update를 동시에해도 문제가 되지 않는 로직이라면?
 
-  ![alt text](img/image-19.png)
+  ![alt text](img/1-3/image-19.png)
 
   - 비동기적으로 DB에 요청을 보내면 된다.
   

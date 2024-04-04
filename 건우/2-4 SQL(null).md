@@ -47,7 +47,7 @@
 
 예시를 보자
 
-![alt text](img/image-8.png)
+![alt text](img/1-3/image-8.png)
 
 위의 테이블에서
 
