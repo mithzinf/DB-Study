@@ -35,7 +35,7 @@ SET attribute = value [, attribute = value, .. ]
 
 ### 예제 1. 프로젝트 ID 2003에 참여한 임직원의 연봉을 두배로 인상한다.
 
-![alt text](img/image-4.png)
+![alt text](img/1-3/image-4.png)
 
 ```SQL
 UPDATE employee, works_on
@@ -79,7 +79,7 @@ FROM table(s)
 
 ### 예제1. project 2002를 리딩 하고 있는 임직원의 ID 와 이름과 직군을 조회.
 
-![alt text](img/image-5.png)
+![alt text](img/1-3/image-5.png)
 
 ```SQL
 SELECT employee.id, employee.name, position
@@ -114,7 +114,7 @@ SELECT 결과에서 중복되는 tuples은 제외하고 싶을 때 사용
 
 ## LIKE
 
-![alt text](img/image-6.png)
+![alt text](img/1-3/image-6.png)
 
 ## *(asterisk)
 

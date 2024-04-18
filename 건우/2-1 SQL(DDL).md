@@ -2,13 +2,13 @@
 
 ## MySQL data type
 
-![alt text](img/image.png)
+![alt text](img/1-3/image.png)
 
-![alt text](img/image-1.png)
+![alt text](img/1-3/image-1.png)
 
-![alt text](img/image-2.png)
+![alt text](img/1-3/image-2.png)
 
-![alt text](img/image-3.png)
+![alt text](img/1-3/image-3.png)
 
 
 ## Key Constaints
