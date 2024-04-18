@@ -92,7 +92,7 @@
 - Clustered Index 와 Non-Clustered Index 한눈에 보기  
   ![image](https://github.com/mithzinf/DB-Study/assets/124668883/5ec6c7e7-dda9-4726-9434-243447c4ef22)
 
-- 참고 사이트
+- 참고 사이트   
   https://velog.io/@gillog/SQL-Clustered-Index-Non-Clustered-Index#clustered-index      
   https://choiblack.tistory.com/53
   
