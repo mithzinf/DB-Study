@@ -119,11 +119,12 @@
 
 
   2-1. 첫번째 특징 : 유연한 스키마 (기준 : mongoDB)  
+    ![image](https://github.com/mithzinf/DB-Study/assets/124668883/53196384-551c-4eb8-8ba0-1b9fa8d6d435)    
 
 
-    ![image](https://github.com/mithzinf/DB-Study/assets/124668883/53196384-551c-4eb8-8ba0-1b9fa8d6d435)  
 
 
+  
     ```
     NoSQL은 RDB의 Table에 해당하는 **Collection**을 가지고 있고, RDB의 Row에 해당하는 **Document**를 가지고 있음
     이러한 특징으로 인해, NoSQL은 유연한 스키마를 보유하고 있음  
