@@ -103,9 +103,10 @@
 
   ***
   
-  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/9ade18c7-881f-45d9-8b19-bb59e9db7d70)  
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/9ade18c7-881f-45d9-8b19-bb59e9db7d70)   
 
-
+  *high throughput : 초고속 처리, low-latency : 적은 대기시간*  
+  *비정형 데이터 : 동영상 파일, 오디오 파일, 사진, 보고서(문서), 메일 본문*  
 
 
 2. NoSQL의 등장 및 특징
@@ -125,7 +126,7 @@
 
     ```
     NoSQL은 RDB의 Table에 해당하는 **Collection**을 가지고 있고, RDB의 Row에 해당하는 **Document**를 가지고 있음
-    이러한 특징으로 인해, NoSQL은 유연한 스키마를 보유하고 있음.  
+    이러한 특징으로 인해, NoSQL은 유연한 스키마를 보유하고 있음  
     즉, 데이터를 저장하기 전에, 스키마를 사전 정의할 필요가 없다. 그로 인해 데이터의 유연성은 높여주고, 새로운 데이터 형식이나 요구사항에 대한 대응이 쉬움
     ```   
 
