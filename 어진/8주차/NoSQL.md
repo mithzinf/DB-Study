@@ -12,7 +12,10 @@
   2-1. 첫번째 특징 : 유연한 스키마 (기준 : mongoDB)  
   2-2. 두번째 특징 : 중복 허용 (기준 : mongoDB)  
   2-3. 세번째 특징 : scale-out 편리함  
-  2-4. 네번째 특징 : 더 높은 처리량   
+  2-4. 네번째 특징 : 더 높은 처리량
+3. Redis  
+
+
  
 
 ---
@@ -31,14 +34,33 @@
 ***
 
 
-1. RDB의 단점   
+1. RDB의 단점
+
   1-1. 첫번째 단점 : 경직된 스키마  
 
 - 새로운 데이터를 추가할 때, 스키마를 변경해야 하는 단점 有  
   -> 이미 해당 테이블에 많은 데이터가 있다면, 새로운 컬럼을 추가하는 것은 부담이 됨
 
+  예시)
+
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/9498f24a-e4fe-4ac7-8c91-a1d369adba74)
+  상황 : 이미 수많은 데이터가 쌓인 주문 테이블에 새로운 컬럼을 추가해야 하는 상황..주문 테이블에 로켓배송 여부를 나타내는 컬럼을 추가해야 한다고 가정해보겠음
+
+
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/f1002daa-0d05-4718-8029-0eb6f9f06fb2)
+
+  설명 : 만약 이렇게 변경을 하게 된다면? 아래와 같은 이슈 유발 가능성 有  
+
+  대량의 데이터 업데이트: 이미 데이터가 많은 테이블에 새로운 컬럼을 추가하고 초기화하는 작업 = 많은 양의 데이터를 업데이트해야 하므로 대량의 write 작업이 필요함...
+  이로 인해 데이터베이스 서버와 애플리케이션 서버에 부하가 발생할 수 있음..🥹  
+
+
+
 
   1-2. 두번째 단점 : 과도한 조인과 성능 하락
+
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/ad6a262f-7923-46d1-ab2f-40f1a5b4265c)
+
 
   - 다양한 조합의 데이터를 추려 가지고 오기 위해, 여러 테이블 간의 join 수행 필요  
   - if) 복잡한 쿼리 or 대량의 데이터에서 join을 수행 -> 성능 저하 발생 가능성 有
@@ -48,10 +70,31 @@
 
   *scale out : 트래픽의 사이즈가 커질수록, scale-out은 필연적임*
 
-  - RDB는 scale-out에 유연하지 않음
+
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/8500088f-0022-45e8-b104-76d91e09be54)  
+
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/5cc18fdb-b23e-4275-9ff0-02f0de5264a5)  
+
+
+  - RDB는 scale-out에 유연하지 않음  
+  - 그래서, 주로 scale-up / replication 으로 이와 같은 이슈 해결  
+ 
+  **replication**
+  1. 방법 : 데이터베이스 서버를 여러 개 복제하여 부하 분산을 시도하는 방법 & 복제된 서버 중 하나가 주(primary) 서버로 쓰기 / 읽기 요청을 처리하고, 다른 서버들은 읽기 요청만 처리  
+
+  2. 한계
+
+- 상세 설명: write 요청이 몰려올 경우, primary 서버를 제외한 secondary 서버는 read-only이기 때문에
+결국 write를 담당하는 primary 서버는 cpu 사용량은 늘어날 것이고 부하가 발생하게 됨  
+
+- Multi-master replication, sharding을 통한 방법을 통해 부하 발생에 대한 문제 해결할 수 있으나, 일반적으로 RDB는 scale-out에 유연한 db가 아닙니다.  
     
 
    1-4. 네번째 단점 : ACID가 성능에 영향
+
+
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/04f5e493-5dab-4288-919d-17537352e566)
+
 
   - RDB는 ACID 특성을 보장하기 위해 트랜잭션을 사용함 -> 데이터 일관성, 안전성 확보되나 트랜잭션 처리로 인한 오버헤드 발생으로 성능에 영향 줄 수 有
     
@@ -59,15 +102,15 @@
 
 
   ***
-
-![image](https://github.com/mithzinf/DB-Study/assets/124668883/0fa412ac-ae79-4105-b6f9-7d9e670410e4)
+  
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/9ade18c7-881f-45d9-8b19-bb59e9db7d70)  
 
 
 
 
 2. NoSQL의 등장 및 특징
 
- **등장 배경 : 지난 20년간 데이터를 저장하는데에 RDB가 쓰였으나, 시간이 지나면서 데이터&트래픽의 양이 기하급수적으로 증가함에 따라 한 대에서 실행되도록 설계된 관계형 데이터베이스를 사용하는 것은 하드웨어적으로 큰 비용이 발생하게 되는 한계가 발생**  
+ **등장 배경 : '시대 흐름 속에서..대용량에 대한 효과적인 데이터베이스 필요성 실감' - 지난 20년간 데이터를 저장하는데에 RDB가 쓰였으나, 시간이 지나면서 데이터&트래픽의 양이 기하급수적으로 증가함에 따라 한 대에서 실행되도록 설계된 관계형 데이터베이스를 사용하는 것은 하드웨어적으로 큰 비용이 발생하게 되는 한계가 발생**  
  **So, 데이터의 일관성은 약간 포기하는 대신, 대용량 데이터, 대용량 트래픽에 대비할 수 있는 scale-out이 가능한 시스템을 목표로 등장하게 된 것 : NOSQL**  
 
  **결론 : NoSQL의 등장으로 스케일이 작고, 금액대도 낮은 장비 여러 대로 대용량 데이터, 대용량 트래픽의 부하를 처리하는 것이 가능하게 됨**  
@@ -75,6 +118,9 @@
 
 
   2-1. 첫번째 특징 : 유연한 스키마 (기준 : mongoDB)  
+
+
+    ![image](https://github.com/mithzinf/DB-Study/assets/124668883/53196384-551c-4eb8-8ba0-1b9fa8d6d435)  
 
 
     ```
@@ -142,8 +188,6 @@
   - 복잡성 증가 : 분산 시스템의 관리와 운영은 일반적으로 복잡해진다. 데이터 일관성, 분산 트랜잭션 등에 대한 처리가 어려울 수 있음
 
 
-
-
   
   
   2-4. 네번째 특징 : 더 높은 처리량  
@@ -167,7 +211,49 @@
 
 
     
-  
+  3. Redis
+
+
+  ![image](https://github.com/mithzinf/DB-Study/assets/124668883/1be053fd-795b-4a36-a96f-0f63942d0421)  
+
+
+- 소개 : Redis는 in-memory key-value 데이터베이스로서, 데이터를 메모리에 저장하므로 빠른 응답 시간을 제공
+
+
+- 개념
+  - in-memory key-value database, cache or...   
+  - data type: strings, lists, sets, hashes, stored sets, ...
+  - Hash-based Sharded Cluster: Redis는 데이터를 여러 서버에 분산 저장하는 기능을 제공하며, 해시 기반의 샤딩(sharding) 클러스터를 형성할 수 있고, 이를 통해 대용량 데이터의 확장성을 확보할 수 있음
+  - 고가용성: Redis는 데이터 복제(replication)와 자동 장애 복구(automatic failover)를 지원하여 고가용성을 제공 -> Redis 클러스터가 안정적으로 운영될 수 있다~!!~~!~!~!!!!
+
+
+
+##### Redis를 cache로 사용한 예제
+Redis는 in-memory 기반의 DB이고 memory의 응답성이 ssd, hdd보다 빠르기 때문에 DB 앞단에 Redis를 두어 cache로 많이 사용함   
+
+
+**비포**  
+
+- 적은 트래픽이었다가...
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/e7bd3ad2-0adb-4fa3-95c6-8dc56c29fb28)     
+
+- 트래픽 증가 : 트래픽이 증가하게 되면 DB 서버에 부하가 발생하게 되고 -> DB 서버의 응답 시간이 증가 & 서비스 성능 저하 !!  
+![image](https://github.com/mithzinf/DB-Study/assets/124668883/e7584f56-d832-425c-9779-c299b39cfc7f)  
+
+
+ **해결방안 : Redis**  
+
+ ![image](https://github.com/mithzinf/DB-Study/assets/124668883/9ed4cbcb-51c5-4477-97d0-a75bf714c1b0)   
+ - How? : 이 위치에 Redis를 두고, Cache로 사용하면 됨
+ - 효과 : DB 서버 혼자서 모든 트래픽을 처리하지 않아도 됨
+ - Why? : Redis는 메모리 기반이므로 빠른 응답성을 제공하며, 캐시 역할을 하여 DB 서버의 부하를 줄여줌 -> 따라서 훨씬 더 많은 트래픽을 처리할 수 있으며, 응답 시간이 개선됨ㅠ     
+
+너무 좋다~~
+
+
+
+
+
 
 
   
